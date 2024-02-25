@@ -1,0 +1,241 @@
+[include mainsail.cfg]
+
+[pause_resume]
+recover_velocity: 300.0
+
+# [include ./ercf_hardware.cfg]
+# [include ./ercf_software.cfg]
+
+[mcu rpi]
+serial: /tmp/klipper_host_mcu
+
+#[adxl345]
+#cs_pin: rpi:None
+
+#[resonance_tester]
+#accel_chip: adxl345
+#probe_points: 200,200,50
+
+[bltouch]
+sensor_pin: ^PA2
+control_pin: PA1
+speed: 7
+sample_retract_dist: 10
+pin_move_time: 0.5
+stow_on_each_sample: false
+probe_with_touch_mode: false
+pin_up_reports_not_triggered: True
+pin_up_touch_mode_reports_triggered: True
+z_offset: 1.195
+x_offset: 0
+y_offset: 10
+
+[mcu]
+serial: /dev/serial/by-id/usb-Klipper_stm32f407xx_320026001347313337303439-if00
+
+[virtual_sdcard]
+path: ~/printer_data/gcodes
+
+[printer]
+kinematics: corexy
+max_velocity: 300
+max_accel: 3000
+max_z_velocity: 25
+max_z_accel: 30
+
+[stepper_x]
+step_pin: PE9
+endstop_pin: ^!PB10
+dir_pin: PF1
+enable_pin: !PF2
+rotation_distance: 40
+microsteps: 16
+position_endstop: 0
+position_min: 0
+position_max: 400 # for bed mesh
+homing_speed: 20
+second_homing_speed: 10
+homing_retract_dist: 10
+
+[tmc2209 stepper_x]
+uart_pin: PC13
+run_current: 0.8
+hold_current: 0.500
+#stealthchop_threshold: 250
+
+[stepper_y]
+step_pin: PE11
+endstop_pin: !PE12
+dir_pin: PE8
+enable_pin: !PD7
+rotation_distance: 40
+microsteps: 16
+position_endstop: -16
+position_min: -16
+position_max: 390 # for bed mesh
+homing_speed: 20
+second_homing_speed: 10
+homing_retract_dist: 10
+
+[tmc2209 stepper_y]
+uart_pin: PE3
+run_current: 0.8
+hold_current: 0.500
+#stealthchop_threshold: 250
+
+
+[stepper_z]
+endstop_pin: probe:z_virtual_endstop
+step_pin: PE13
+dir_pin: PC2
+enable_pin: !PC0
+rotation_distance: 8
+microsteps: 16
+position_min: -5 # Needed for z-offset calibration and tilt_adjust.
+homing_speed: 5
+second_homing_speed: 2
+position_max: 400
+homing_retract_dist: 10
+
+[tmc2209 stepper_z]
+uart_pin: PE1
+run_current: 0.650
+hold_current: 0.450
+#stealthchop_threshold: 30
+
+
+[extruder]
+step_pin: PE14
+dir_pin: !PA0
+enable_pin: !PC3
+microsteps: 16
+rotation_distance: 4.4
+nozzle_diameter: 0.400
+filament_diameter: 1.750
+heater_pin: PB1 # Heat0
+sensor_pin:  PF4 # T1 Header
+sensor_type: ATC Semitec 104GT-2
+full_steps_per_rotation: 200
+control = pid
+pid_kp = 23.292
+pid_ki = 1.294
+pid_kd = 104.812
+min_temp: 0
+max_temp: 300
+min_extrude_temp: 0
+max_extrude_only_distance: 300
+max_extrude_cross_section: 50
+pressure_advance = 0.05
+
+[tmc2209 extruder]
+uart_pin: PD4
+run_current: 0.8
+hold_current: 0.500
+#stealthchop_threshold: 5
+
+[heater_bed]
+heater_pin: PD12
+sensor_pin: PF3
+sensor_type: EPCOS 100K B57560G104F
+min_temp: 0
+max_temp: 130
+control = pid
+pid_kp = 72.353
+pid_ki = 1.227
+pid_kd = 1066.301
+
+
+[fan]
+pin: PE6
+
+[heater_fan fan1]
+pin: PE5
+
+[temperature_sensor SKR_Pro]
+sensor_type: temperature_mcu
+min_temp: 0
+max_temp: 100
+
+
+
+#[filament_switch_sensor filament_sensor]
+#pause_on_runout: True
+#runout_gcode: M25
+#switch_pin: !PE6
+
+#[output_pin beeper]
+#pin: PA8
+
+[safe_z_home]
+home_xy_position: 200, 200
+speed: 50
+z_hop: 10
+z_hop_speed: 5
+
+[bed_screws]
+screw1: 25,  25
+screw2: 200, 25
+screw3: 375, 25
+screw4: 25,  375
+screw5: 200, 375
+screw6: 375, 375
+
+[screws_tilt_adjust]
+screw1: 25,  30
+screw1_name: front left
+screw2: 200, 30
+screw2_name: front center
+screw3: 375, 30
+screw3_name: front right
+screw4: 25,  370
+screw4_name: rear left
+screw5: 200, 370
+screw5_name: rear center
+screw6: 375, 370
+screw6_name: rear right
+horizontal_move_z: 10
+speed: 50
+screw_thread: CW-M3
+
+[bed_mesh]
+speed: 150
+probe_count: 4,4
+horizontal_move_z: 10
+zero_reference_position: 200, 200
+algorithm: lagrange
+mesh_min : 35, 35
+mesh_max : 370,370
+mesh_pps: 0
+fade_start: 1
+fade_end: 10
+fade_target: 0
+
+#[input_shaper]
+#shaper_freq_x: 82.6  # frequency for the X mark of the test model
+#shaper_type_x: zv
+#shaper_freq_y: 48.60  # frequency for the Y mark of the test model
+#shaper_type_y: mzv
+
+#*# <---------------------- SAVE_CONFIG ---------------------->
+#*# DO NOT EDIT THIS BLOCK OR BELOW. The contents are auto-generated.
+#*#
+#*# [probe]
+#*# z_offset = 1.500
+#*#
+#*# [bed_mesh default]
+#*# version = 1
+#*# points =
+#*# 	  -0.040629, -0.099379, -0.036879, -0.086879
+#*# 	  -0.061879, -0.034379, 0.015621, 0.003121
+#*# 	  -0.076879, -0.038129, 0.056871, 0.144371
+#*# 	  -0.120629, -0.168129, -0.170629, -0.245629
+#*# x_count = 4
+#*# y_count = 4
+#*# mesh_x_pps = 0
+#*# mesh_y_pps = 0
+#*# algo = lagrange
+#*# tension = 0.2
+#*# min_x = 30.0
+#*# max_x = 369.99
+#*# min_y = 45.0
+#*# max_y = 354.99
